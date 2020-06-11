@@ -1,18 +1,18 @@
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <sstream> // stringstream
-#include <sys/types.h> // Para leitura de arquivos
-#include <dirent.h> // Para leitura de arquivos
+// #include <string>
+// #include <fstream>
+// #include <iostream>
+// #include <vector>
+// #include <sstream> // stringstream
+// #include <sys/types.h> // Para leitura de arquivos
+// #include <dirent.h> // Para leitura de arquivos
 
-using namespace std;
-
-typedef struct{
-string day;
-string hour;
-float price;
-} Row;
+// using namespace std;
+//
+// typedef struct{
+// string day;
+// string hour;
+// float price;
+// } Row;
 
 /* Codigo adaptado de https://www.geeksforgeeks.org/csv-file-management-using-c/ */
 
