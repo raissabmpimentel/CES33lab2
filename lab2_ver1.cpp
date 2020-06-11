@@ -9,12 +9,9 @@
 /* define derived values from the variables */
 int numbers_per_thread;
 int offset;
-int finished_threads;
 vector<Row> current_arr;
 
-sem_t full;
-sem_t empty;
-sem_t mutex;
+//sem_t mutex;
 
 void printVector(vector<Row> v){
   int len = v.size();
@@ -86,27 +83,21 @@ void merge_day(vector<Row> &arr, int l, int m, int r) {
 }
 
 /* merge locally sorted sections */
-void* merge_sort_union(void * arg) {
+void merge_sort_union(vector<Row> &arr, int number, int aggregation) {
     //cout << "merge_sort_union \n";
-    sem_wait(&full);
-    //printVector(current_arr);
-    int length = current_arr.size();
-    for(int i = 0; i < NUM_THREADS; i = i + 2) {
-        /*int left = i * (numbers_per_thread * aggregation);
+    int length = arr.size();
+    for(int i = 0; i < number; i = i + 2) {
+        int left = i * (numbers_per_thread * aggregation);
         int right = ((i + 2) * numbers_per_thread * aggregation) - 1;
-        int middle = left + (numbers_per_thread * aggregation) - 1;*/
-        int left = i * (numbers_per_thread);
-        int right = ((i + 2) * numbers_per_thread) - 1;
-        int middle = left + (numbers_per_thread) - 1;
+        int middle = left + (numbers_per_thread * aggregation) - 1;
         if (right >= length) {
             right = length - 1;
         }
-        merge_hour(current_arr, left, middle, right);
+        merge_hour(arr, left, middle, right);
     }
-    /*if (number / 2 >= 1) {
+    if (number / 2 >= 1) {
         merge_sort_union(arr, number / 2, aggregation * 2);
-    }*/
-    //printVector(current_arr);
+    }
 }
 
 /* perform merge sort */
@@ -124,8 +115,6 @@ void merge_sort(vector<Row> &arr, int left, int right) {
 void *thread_merge_sort(void* arg)
 {
     //cout << "thread_merge_sort \n";
-    sem_wait(&empty);
-    //printVector(current_arr);
     int thread_id = (long) arg;
     int left = thread_id * (numbers_per_thread);
     int right = (thread_id + 1) * (numbers_per_thread) - 1;
@@ -138,12 +127,6 @@ void *thread_merge_sort(void* arg)
         merge_sort(current_arr, left + 1, right);
         merge_hour(current_arr, left, middle, right);
     }
-    sem_wait(&mutex);
-    finished_threads++;
-    if(finished_threads == 2)
-      sem_post(&full);
-    //printVector(current_arr);
-    sem_post(&mutex);
     return NULL;
 }
 
@@ -151,13 +134,12 @@ void merge_sort_total(vector<Row> &arr)
 {
   //cout << "merge_sort_total \n";
   current_arr = arr;
-  //printVector(current_arr);
   int length = current_arr.size();
   numbers_per_thread = length / NUM_THREADS;
 
 
   /* begin timing */
-  pthread_t threads[NUM_THREADS + 1];
+  pthread_t threads[NUM_THREADS];
 
   /* create threads */
   for (long i = 0; i < NUM_THREADS; i ++) {
@@ -168,21 +150,12 @@ void merge_sort_total(vector<Row> &arr)
       }
   }
 
-  int rc = pthread_create(&threads[NUM_THREADS], NULL, merge_sort_union, (void *)NULL);
-  if (rc){
-      printf("ERROR; return code from pthread_create() is %d\n", rc);
-      exit(-1);
-  }
-
-  for(long i = 0; i < NUM_THREADS + 1; i++) {
+  for(long i = 0; i < NUM_THREADS; i++) {
       pthread_join(threads[i], NULL);
   }
 
-  //merge_sort_union(current_arr, NUM_THREADS, 1);
-  //printVector(current_arr);
+  merge_sort_union(current_arr, NUM_THREADS, 1);
   arr = current_arr;
-
-
 }
 
 /* test to ensure that the array is in sorted order */
@@ -210,10 +183,6 @@ void sorting_days(unordered_map<string, vector<Row>> &mp)
   //cout << "sorting days \n";
   for(auto it = mp.begin(); it != mp.end(); it++)
   {
-    finished_threads = 0;
-    sem_init(&mutex, 0, 1);
-    sem_init(&full, 0, 0);
-    sem_init(&empty, 0, NUM_THREADS);
     merge_sort_total(it->second);
   }
 }
@@ -222,6 +191,8 @@ void sorting_days(unordered_map<string, vector<Row>> &mp)
 int main() {
 
     unordered_map<string, vector<Row>> all_prices; // Mapa para precos (string que indexa)
+
+    //sem_init(&mutex, 0, 1);
 
     // Mapear os dias que tem arquivos
     vector<string> days;
@@ -237,8 +208,7 @@ int main() {
     for (auto i = days.begin(); i != days.end(); i++)
     {
       vector<Row> aux = read_csv("preprocessed_data/"+ *i + ".csv");
-      // vector<Row> arr = read_csv("teste.csv");
-      // all_prices.insert(pair<string, vector<Row>>("2020-05-04",arr));
+      //vector<Row> arr = read_csv("preprocessed_data/2020-05-04.csv");
       all_prices.insert(pair<string, vector<Row>>(*i,aux));
     }
 
