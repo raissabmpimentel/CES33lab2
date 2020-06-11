@@ -27,5 +27,5 @@ int finished_threads;
 vector<Row> current_arr;
 
 sem_t full;
-sem_t empty;
+//sem_t empty;
 sem_t mutex;

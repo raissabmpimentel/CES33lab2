@@ -82,7 +82,7 @@ void merge_sort_hour(vector<Row> &arr, int left, int right) {
 void *thread_merge_sort_hour(void* arg)
 {
     //cout << "thread_merge_sort \n";
-    sem_wait(&empty);
+    //sem_wait(&empty);
     //printVector(current_arr);
     int thread_id = (long) arg;
     int left = thread_id * (numbers_per_thread);
@@ -112,7 +112,7 @@ void merge_sort_total_hour(vector<Row> &arr)
   //printVector(current_arr);
   int length = current_arr.size();
   numbers_per_thread = length / NUM_MRG_THREADS;
-
+  offset = length % NUM_MRG_THREADS;
 
   /* begin timing */
   pthread_t threads[NUM_MRG_THREADS + 1];
@@ -170,7 +170,7 @@ void sorting_hours_thread(unordered_map<string, vector<Row>> &mp, vector<Row> &a
     finished_threads = 0;
     sem_init(&mutex, 0, 1);
     sem_init(&full, 0, 0);
-    sem_init(&empty, 0, NUM_MRG_THREADS);
+    //sem_init(&empty, 0, NUM_MRG_THREADS);
     merge_sort_total_hour(it->second);
     arr_days.push_back(it->second.back());
   }
