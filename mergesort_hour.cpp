@@ -190,5 +190,5 @@ void sorting_hours_seq(unordered_map<string, vector<Row>> &mp, vector<Row> &arr_
 void write_output_days(unordered_map<string, vector<Row>> &mp, string type)
 {
   for(auto it = mp.begin(); it != mp.end(); it++)
-    write_csv("output_" + type + "/" + it->first + ".csv", it->second);
+    write_csv("output_" + type + "/days/" + it->first + ".csv", it->second);
 }

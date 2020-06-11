@@ -9,6 +9,7 @@
 #include <sstream> // stringstream
 #include <sys/types.h> // Para leitura de arquivos
 #include <dirent.h> // Para leitura de arquivos
+#include <time.h>
 
 #define NUM_MRG_THREADS 2
 

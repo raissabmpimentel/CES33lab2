@@ -42,8 +42,13 @@ int main() {
     // printVector(current_arr);
     // merge_hour(current_arr, 0, 1, 3);
     // printVector(current_arr);
+    clock_t t_ini, t_fim;
 
+    t_ini = clock();
     sorting_hours_thread(all_prices, arr_days);
+    t_fim = clock();
+
+    
 
     test_array_is_in_order_hour(all_prices);
 

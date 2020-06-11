@@ -159,5 +159,5 @@ void write_output_month(vector<Row> &arr, string type)
 {
     string aux = arr[0].day;
     aux.resize(7);
-    write_csv("output_" + type + "/" + aux + ".csv", arr);
+    write_csv("output_" + type + "/month/" + aux + ".csv", arr);
 }
