@@ -1,59 +1,35 @@
-// #include <string>
-// #include <fstream>
-// #include <iostream>
-// #include <vector>
-// #include <sstream> // stringstream
-// #include <sys/types.h> // Para leitura de arquivos
-// #include <dirent.h> // Para leitura de arquivos
-
-// using namespace std;
-//
-// typedef struct{
-// string day;
-// string hour;
-// float price;
-// } Row;
-
-/* Codigo adaptado de https://www.geeksforgeeks.org/csv-file-management-using-c/ */
+/* Codigo adaptado de https://www.geeksforgeeks.org/csv-file-management-using-c/
+   para ler conteudo de um arquivo csv */
 
 vector<Row> read_csv(string filename){
 
     vector<Row> result;
     Row row;
-    // File pointer
     fstream fin(filename);
 
-    // Read the Data from the file
-    // as String Vector
-    vector<string> aux;
-    string line, word, temp;
+    vector<string> aux; // Para guardar conteudo da linha
+    string line, word; // line guarda string da linha e word guarda cada palavra da linha
 
-    // read an entire row and
-    // store it in a string variable 'line'
+    // Ler uma linha e salvar em uma string chamada 'line'
     while (getline(fin, line)) {
-
         aux.clear();
-
-        // used for breaking words
+        // Usado para quebrar linhas
         stringstream s(line);
-
-        // read every column data of a row and
-        // store it in a string variable, 'word'
-        while (getline(s, word, ',')) {
-            // add all the column data
-            // of a row to a vector
+        while (getline(s, word, ',')) { // Ler cada palavra da linha separado por virgulas e salvar em aux
             aux.push_back(word);
         }
 
+        // Salvar linha conforme struct
         row.day = aux[0];
         row.hour = aux[1];
         row.price = stof(aux[2]);
 
-        result.push_back(row);
+        result.push_back(row); // Colocar linha no vetor de resultado
 }
     return result;
 }
 
+// Escrever o vetor de structs em arquivo csv
 void write_csv(string filename, vector<Row> vec){
   ofstream outfile;
   outfile.open(filename);
@@ -63,6 +39,7 @@ void write_csv(string filename, vector<Row> vec){
 
 }
 
+// Ler strings dos dias analisados, que estao na pasta "preprocessed_data/"
 vector<string> read_days()
 {
   vector<string> days;
@@ -80,14 +57,13 @@ vector<string> read_days()
   return(days);
 }
 
+// Escrever resultados dos testes para os vetores de precos de um unico dia em formato csv
 void write_results_days(string filename, unordered_map<string, vector<Row>> mp) {
   ofstream outfile;
   outfile.open(filename);
 
-  int length = result_tests_days.size();
-
+  // Cabecalho com os nomes dos meses dias em ordem que foram ordenados
   outfile << "test number,";
-
   for(auto it = mp.begin(); it != mp.end(); it++)
   {
     if(it != mp.begin())
@@ -96,6 +72,7 @@ void write_results_days(string filename, unordered_map<string, vector<Row>> mp) 
   }
   outfile << endl;
 
+  // Imprimir resultados dos testes para os vetores de precos de um unico dia
   for (int i = 0; i < result_tests_days.size(); i++)
   {
     outfile << i+1 << ',';
@@ -109,16 +86,17 @@ void write_results_days(string filename, unordered_map<string, vector<Row>> mp) 
   }
 }
 
+// Escrever resultados dos testes para os vetores de precos de um mes em formato csv
 void write_results_month(string filename, vector<Row> arr) {
   ofstream outfile;
   outfile.open(filename);
 
-  int length = result_tests_month.size();
-
+  // Imprimir cabecalho
   string aux = arr[0].day;
-  aux.resize(7);
+  aux.resize(7); // Retirar dia da string para deixar so o mes
   outfile << "test number," << aux << endl;
 
+  // Imprimir resultados dos testes para os vetores de precos de um mes
   for (int i = 0; i < result_tests_month.size(); i++)
     outfile << i+1 << ',' << result_tests_month[i] << endl;
 }

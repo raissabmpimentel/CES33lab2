@@ -1,7 +1,4 @@
-// #include <unordered_map>
-// #include <pthread.h>
-
-/* merge function */
+// Funcao para executar merge com base no dia do preco da acao
 void merge_day(vector<Row> &arr, int l, int m, int r) {
     int i1 = l, i2 = m + 1, i3 = 0;
 
@@ -29,33 +26,23 @@ void merge_day(vector<Row> &arr, int l, int m, int r) {
     }
 }
 
-/* merge locally sorted sections */
+// Funcao para realizar o merge das duas metades ordenadas do vetor
 void* merge_sort_union_day(void * arg) {
-    //cout << "merge_sort_union \n";
-    sem_wait(&full);
-    //printVector(current_arr);
+    sem_wait(&full); // Aguardar ate que as duas threads tenham terminado de executar
     int length = current_arr.size();
-    for(int i = 0; i < NUM_MRG_THREADS; i = i + 2) {
-        /*int left = i * (numbers_per_thread * aggregation);
-        int right = ((i + 2) * numbers_per_thread * aggregation) - 1;
-        int middle = left + (numbers_per_thread * aggregation) - 1;*/
-        int left = i * (numbers_per_thread);
-        int right = ((i + 2) * numbers_per_thread) - 1;
-        int middle = left + (numbers_per_thread) - 1;
-        if (right >= length) {
-            right = length - 1;
-        }
-        merge_day(current_arr, left, middle, right);
+
+    // Determinar limites do vetor a dar merge
+    int left = i * (numbers_per_thread);
+    int right = ((i + 2) * numbers_per_thread) - 1;
+    int middle = left + (numbers_per_thread) - 1;
+    if (right >= length) {
+        right = length - 1;
     }
-    /*if (number / 2 >= 1) {
-        merge_sort_union(arr, number / 2, aggregation * 2);
-    }*/
-    //printVector(current_arr);
+    merge_day(current_arr, left, middle, right);
 }
 
-/* perform merge sort */
+// Relizar merge sort comum
 void merge_sort_day(vector<Row> &arr, int left, int right) {
-    //cout << "merge_sort \n";
     if (left < right) {
         int middle = left + (right - left) / 2;
         merge_sort_day(arr, left, middle);
@@ -64,12 +51,9 @@ void merge_sort_day(vector<Row> &arr, int left, int right) {
     }
 }
 
-/** assigns work to each thread to perform merge sort */
+// Relizar
 void *thread_merge_sort_day(void* arg)
 {
-    //cout << "thread_merge_sort \n";
-    //sem_wait(&empty);
-    //printVector(current_arr);
     int thread_id = (long) arg;
     int left = thread_id * (numbers_per_thread);
     int right = (thread_id + 1) * (numbers_per_thread) - 1;
@@ -86,7 +70,6 @@ void *thread_merge_sort_day(void* arg)
     finished_threads++;
     if(finished_threads == 2)
       sem_post(&full);
-    //printVector(current_arr);
     sem_post(&mutex);
     return NULL;
 }
