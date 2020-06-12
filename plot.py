@@ -4,7 +4,7 @@ import matplotlib.dates as mdates
 import datetime
 import csv
 
-def plot(file_name, month, path):
+def plot(file_name, month, path, seq):
 	x_label = []
 	x = [] # dates
 	y = [] # prices
@@ -33,21 +33,28 @@ def plot(file_name, month, path):
 	ref = file_name
 	ref = ref.replace(".csv", "").split("-")
 	
-	# set a title for x-axis
-	ax.set_xlabel("Times", fontsize = 12)
 	# set a title for y-axis
-	ax.set_ylabel("Prices", fontsize = 12)
+	ax.set_ylabel("Preço", fontsize = 12)
 	# ax.locator_params(axis='y', nbins=6)
 
 	if month: 
+		# set a title for x-axis
+		ax.set_xlabel("Data", fontsize = 12)
+
 		ref = ref[1] + "-" + ref[0]
 		ax.set_xticklabels(x, rotation = 45, fontsize = 8)
 
 		ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
 
 		# plot prices as a function of dates.
-		ax.plot(x, y, 'r.-')
+		if seq:
+			ax.plot(x, y, 'b.-')
+		else:
+			ax.plot(x, y, 'r.-')
 	else:
+		# set a title for x-axis
+		ax.set_xlabel("Horário", fontsize = 12)
+
 		ref = ref[2] + "-" + ref[1] + "-" + ref[0]
 		ax.set_xticks(x_label) # set tick for x-axis
 
@@ -56,7 +63,10 @@ def plot(file_name, month, path):
 
 		ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 		# plot prices as a function of dates.
-		ax.plot(x, y, 'b-')
+		if seq:
+			ax.plot(x, y, 'b-')
+		else:
+			ax.plot(x, y, 'r-')
 
 	title = 'Magalu ' + ref
 	ax.set_title(title, fontsize = 16)
@@ -66,9 +76,8 @@ def plot(file_name, month, path):
 
 	plt.savefig(path.replace(file_name, "") + title + ".png")
 	plt.close()
-	print("Plot efetuado!")
 
-def generate_plot_from_folder(folder, month):
+def generate_plot_from_folder(folder, month, seq):
 	path = os.getcwd() + folder
 
 	files = []
@@ -87,17 +96,15 @@ def generate_plot_from_folder(folder, month):
 			if s.find(".csv"):
 				file_name = s
 
-		print(path)
-		print(file_name)
-		plot(file_name, month, path)
+		plot(file_name, month, path, seq)
 
 
 
 def generate_all_plots():
-	generate_plot_from_folder("/output_seq/month/", True)
-	generate_plot_from_folder("/output_thread/month/", True)
-	generate_plot_from_folder("/output_seq/days/", False)
-	generate_plot_from_folder("/output_thread/days/", False)
+	generate_plot_from_folder("/output_seq/month/", True, True)
+	generate_plot_from_folder("/output_thread/month/", True, False)
+	generate_plot_from_folder("/output_seq/days/", False, True)
+	generate_plot_from_folder("/output_thread/days/", False, False)
 	
 
 generate_all_plots()
