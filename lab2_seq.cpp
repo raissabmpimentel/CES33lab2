@@ -15,6 +15,10 @@ int main() {
     // Executar os testes NUM_TESTS vezes
     for(int i = 0; i < NUM_TESTS; i++)
     {
+      // Limpar dados anteriores
+      arr_days.clear();
+      all_prices.clear();
+
       // Ler dados de todos os dias e inserir no mapa
       for (auto it = days.begin(); it != days.end(); it++)
       {
@@ -25,7 +29,7 @@ int main() {
       // Ordenar o mapa por horas sequencialmente
       sorting_hours_seq(all_prices, arr_days);
 
-      // Ordenar o vetor de precos diarios sequencialmente, calcular o tempo e colocar no vetor de resultdos
+      // Ordenar por dia o vetor de precos durante um mes sequencialmente, calcular o tempo e colocar no vetor de resultdos
       clock_t t_ini, t_fim;
       double time_taken;
       t_ini = clock();

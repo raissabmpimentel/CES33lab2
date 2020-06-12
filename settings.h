@@ -1,7 +1,6 @@
-#include <semaphore.h>
+#include <semaphore.h> //Semaforos
 #include <vector>
 #include <string>
-#include <sys/time.h>
 #include <unordered_map>
 #include <pthread.h>
 #include <fstream>
@@ -9,28 +8,26 @@
 #include <sstream> // stringstream
 #include <sys/types.h> // Para leitura de arquivos
 #include <dirent.h> // Para leitura de arquivos
-#include <time.h>
+#include <time.h> // Para medir tempo
 
-#define NUM_MRG_THREADS 2
-#define NUM_TESTS 100
+#define NUM_MRG_THREADS 2 // Numero de threads para o merge sort
+#define NUM_TESTS 100 // Numero de testes
 
 using namespace std;
 
 typedef struct{
-string day;
-string hour;
-float price;
+string day; // Dia do preco
+string hour; // Hora do preco
+float price; // Preco
 } Row;
 
-/* define derived values from the variables */
-int numbers_per_thread;
-int offset;
-int finished_threads;
-vector<Row> current_arr;
+int items_per_thread; //Numero de items do subvetor em que se fazer o mergesort
+int offset; //Numero de itens que nao estao numa metade completa do vetor
+int finished_threads; //Numero de threads finalizadas (util para saber quando fazer merge das metades ordenadas)
+vector<Row> current_arr; //Vetor sendo ordenado
 
-sem_t full;
-//sem_t empty;
-sem_t mutex;
+sem_t full; //Semaforo para identificar se as threads ja ordenaram cada metade do vetor
+sem_t mutex; //Semaforo para identificar regiao critica (atualizar variavel finished_threads)
 
-vector<vector<double>> result_tests_days;
-vector<double> result_tests_month;
+vector<vector<double>> result_tests_days; // Resultados para os vetores dos precos diarios ordenados por hora
+vector<double> result_tests_month; // Resultados para os vetores dos precos durante um mes ordenados por dia
