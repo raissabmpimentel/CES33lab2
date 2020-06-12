@@ -46,7 +46,7 @@ vector<string> read_days()
   DIR* dirp = opendir("preprocessed_data/");
   struct dirent * dp;
   while ((dp = readdir(dirp)) != NULL) {
-    if (dp->d_name[0] != '.')
+    if (dp->d_name[0] != '.') // Ignorar arquivos ocultos do Linux
     {
       string aux = dp->d_name;
       aux.resize(10); // Retirar .csv dos nomes

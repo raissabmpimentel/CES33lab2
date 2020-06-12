@@ -18,7 +18,7 @@ data = data[data['month'] == '05']
 
 data.drop(columns=['timestamp','month','volume','open'],inplace=True)
 
-## Retirar segundos das horas
+## Retirar segundos das horas e ajustar para horario da Brasilia (somar uma hora)
 data['hour'] = data['hour'].apply(lambda x: str(int(x.split(':')[0]) + 1) + ':' + x.split(':')[1])
 
 ## Preco do momento eh o de fechamento

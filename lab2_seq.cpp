@@ -6,7 +6,7 @@
 int main() {
 
     unordered_map<string, vector<Row>> all_prices; // Mapa para precos (string da data que indexa os precos)
-    vector<Row> arr_days;
+    vector<Row> arr_days; // Vetor para guardar os precos finais de cada dia util
 
     // Mapear os dias que tem arquivos
     vector<string> days;

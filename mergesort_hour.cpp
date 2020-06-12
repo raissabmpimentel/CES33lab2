@@ -33,7 +33,7 @@ void* merge_sort_union_hour(void * arg) {
 
     // Determinar limites do vetor a dar merge
     int left = 0;
-    int right = (2* items_per_thread) - 1;
+    int right = (2 * items_per_thread) - 1;
     int middle = left + (items_per_thread) - 1;
     if (right >= length) {
         right = length - 1;
@@ -59,7 +59,7 @@ void *thread_merge_sort_hour(void* arg)
     int left = thread_id * (items_per_thread);
     int right = (thread_id + 1) * (items_per_thread) - 1;
     if (thread_id == NUM_MRG_THREADS - 1) {
-        right += offset; // Offset sobre uma parte do vetor nao analisado
+        right += offset; // Offset sobre uma parte do vetor que ficou fora da divisao
     }
     int middle = left + (right - left) / 2;
 
