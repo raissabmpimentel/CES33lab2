@@ -58,7 +58,7 @@ void write_csv(string filename, vector<Row> vec){
   ofstream outfile;
   outfile.open(filename);
 
-  for (vector<Row>::const_iterator i = vec.begin(); i != vec.end(); i++)
+  for (auto i = vec.begin(); i != vec.end(); i++)
     outfile << (*i).day << ',' << (*i).hour << ',' << (*i).price << endl;
 
 }
@@ -79,3 +79,61 @@ vector<string> read_days()
   closedir(dirp);
   return(days);
 }
+
+void write_results(string filename, vector<vector<double>> vec, unordered_map<string, vector<Row>> mp) {
+  ofstream outfile;
+  outfile.open(filename);
+
+  int length = vec.size();
+
+  string aux;
+  aux = mp.begin()->first;
+
+  outfile << "test number,";
+  for(auto it = mp.begin(); it != mp.end(); it++)
+    outfile << it->first << ',';
+
+  aux.resize(7);
+  outfile << aux << endl;
+
+  for (int i = 0; i < vec.size(); i++)
+  {
+    outfile << i+1 << ',';
+    for(auto j = vec[i].begin(); j != vec[i].end(); j++)
+    {
+      outfile << (*j);
+      if (j + 1 != vec[i].end())
+        outfile << ',';
+    }
+    outfile << endl;
+  }
+}
+
+/*void write_result_days(string filename, vector<vector<double>> vec, vector<string> days) {
+  ofstream outfile;
+  outfile.open(filename);
+
+  int length = vec.size();
+
+  outfile << "test number,";
+  for(auto it = days.begin(); it != days.end(); it++)
+  {
+    if (it != days.begin())
+      outfile << ',';
+    outfile << days[it];
+  }
+
+  outfile << endl;
+
+  for (int i = 0; i < vec.size(); i++)
+  {
+    outfile << i+1 << ',';
+    for(auto j = vec[i].begin(); j != vec[i].end(); j++)
+    {
+      outfile << (*j);
+      if (j + 1 != vec[i].end())
+        outfile << ',';
+    }
+    outfile << endl;
+  }
+}*/

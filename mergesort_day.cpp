@@ -144,14 +144,21 @@ void test_array_is_in_order_day(vector<Row> &arr) {
 
 }
 
-void sorting_days(vector<Row> &arr)
+void sorting_days(vector<Row> &arr, int n_test)
 {
   //cout << "sorting days \n";
     finished_threads = 0;
     sem_init(&mutex, 0, 1);
     sem_init(&full, 0, 0);
     //sem_init(&empty, 0, NUM_MRG_THREADS);
+    clock_t t_ini, t_fim;
+    double time_taken;
+    t_ini = clock();
     merge_sort_total_day(arr);
+    t_fim = clock();
+    time_taken = (t_fim - t_ini) / (double) CLOCKS_PER_SEC;
+    result_tests[n_test].push_back(time_taken);
+
 }
 
 

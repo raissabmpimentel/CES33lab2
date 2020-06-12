@@ -27,39 +27,37 @@ int main() {
     }
     cout << endl;*/
 
-    // Ler dados de todos os dias
-    for (auto i = days.begin(); i != days.end(); i++)
+    for(int i = 0; i < NUM_TESTS; i++)
     {
-      vector<Row> aux = read_csv("preprocessed_data/"+ *i + ".csv");
-      // vector<Row> arr = read_csv("teste.csv");
-      // all_prices.insert(pair<string, vector<Row>>("2020-05-04",arr));
-      all_prices.insert(pair<string, vector<Row>>(*i,aux));
+      // Ler dados de todos os dias
+      for (auto it = days.begin(); it != days.end(); it++)
+      {
+        vector<Row> aux = read_csv("preprocessed_data/"+ *it + ".csv");
+        // vector<Row> arr = read_csv("teste.csv");
+        // all_prices.insert(pair<string, vector<Row>>("2020-05-04",arr));
+        all_prices.insert(pair<string, vector<Row>>(*it,aux));
+      }
+
+      //merge_sort_total(arr);
+
+      //current_arr = {Row{"2020-05-04","12:39",50.66}, Row{"2020-05-04","13:58",50.35}, Row{"2020-05-04","12:03",49.94}, Row{"2020-05-04","16:22",51.47}};
+      // printVector(current_arr);
+      // merge_hour(current_arr, 0, 1, 3);
+      // printVector(current_arr);
+
+      sorting_hours_thread(all_prices, arr_days);
+
+      //test_array_is_in_order_hour(all_prices);
+
+      sorting_days(arr_days, i);
+
+      //test_array_is_in_order_day(arr_days);
+
     }
 
-    //merge_sort_total(arr);
-
-    //current_arr = {Row{"2020-05-04","12:39",50.66}, Row{"2020-05-04","13:58",50.35}, Row{"2020-05-04","12:03",49.94}, Row{"2020-05-04","16:22",51.47}};
-    // printVector(current_arr);
-    // merge_hour(current_arr, 0, 1, 3);
-    // printVector(current_arr);
-    clock_t t_ini, t_fim;
-
-    t_ini = clock();
-    sorting_hours_thread(all_prices, arr_days);
-    t_fim = clock();
-
-    
-
-    test_array_is_in_order_hour(all_prices);
-
     write_output_days(all_prices, "thread");
-
-    sorting_days(arr_days);
-
-    test_array_is_in_order_day(arr_days);
-
     write_output_month(arr_days, "thread");
-
+    write_results("tests_thread/results.csv", result_tests, all_prices);
     //sorting_month(arr_days);
 
     // Selecionar data para escrever como saida de teste (Apagar depois)

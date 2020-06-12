@@ -12,6 +12,7 @@
 #include <time.h>
 
 #define NUM_MRG_THREADS 2
+#define NUM_TESTS 100
 
 using namespace std;
 
@@ -30,3 +31,5 @@ vector<Row> current_arr;
 sem_t full;
 //sem_t empty;
 sem_t mutex;
+
+vector<vector<double>> result_tests;

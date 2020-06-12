@@ -12,6 +12,6 @@ void merge_sort_total_day(vector<Row> &arr);
 
 void test_array_is_in_order_day(vector<Row> &arr);
 
-void sorting_days(vector<Row> &arr);
+void sorting_days(vector<Row> &arr, int n_test);
 
 void write_output_month(vector<Row> &arr, string type);
