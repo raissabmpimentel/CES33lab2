@@ -33,11 +33,8 @@ void* merge_sort_union_day(void * arg) {
 
     // Determinar limites do vetor a dar merge
     int left = 0;
-    int right = (2 * items_per_thread) - 1;
-    int middle = left + (items_per_thread) - 1;
-    if (right >= length) {
-        right = length - 1;
-    }
+    int right = length - 1;
+    int middle = left + (right - left)/2;
     merge_day(current_arr, left, middle, right);
 }
 
