@@ -7,8 +7,6 @@ import csv
 def plot(file_name, month, path):
 	x_label = []
 	x = [] # dates
-
-	y_label = []
 	y = [] # prices
 
 	with open(path, 'r') as file:
