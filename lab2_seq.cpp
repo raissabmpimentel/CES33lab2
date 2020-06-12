@@ -3,14 +3,14 @@
 #include "mergesort_hour.h"
 #include "mergesort_day.h"
 
-void printVector(vector<Row> v){
+/*void printVector(vector<Row> v){
   int len = v.size();
   cout << "current_arr: {";
   for(int i = 0; i < len; ++i){
     cout << "(" << v[i].day << " , " << v[i].hour <<  " , " << v[i].price << "), ";
   }
   cout << "}" << endl;
-}
+}*/
 
 int main() {
 
@@ -54,7 +54,7 @@ int main() {
       merge_sort_day(arr_days, 0, arr_days.size() - 1);
       t_fim = clock();
       time_taken = (t_fim - t_ini) / (double) CLOCKS_PER_SEC;
-      result_tests[i].push_back(time_taken);
+      result_tests_month.push_back(time_taken);
 
       //test_array_is_in_order_day(arr_days);
     }
@@ -63,7 +63,8 @@ int main() {
 
     write_output_month(arr_days, "seq");
 
-    write_results("tests_seq/results.csv", result_tests, all_prices);
+    write_results_days("tests_seq/results_days.csv", all_prices);
+    write_results_month("tests_seq/results_month.csv", arr_days);
     //sorting_month(arr_days);
 
     // Selecionar data para escrever como saida de teste (Apagar depois)

@@ -3,14 +3,14 @@
 #include "mergesort_hour.h"
 #include "mergesort_day.h"
 
-void printVector(vector<Row> v){
+/*void printVector(vector<Row> v){
   int len = v.size();
   cout << "current_arr: {";
   for(int i = 0; i < len; ++i){
     cout << "(" << v[i].day << " , " << v[i].hour <<  " , " << v[i].price << "), ";
   }
   cout << "}" << endl;
-}
+}*/
 
 int main() {
 
@@ -57,7 +57,9 @@ int main() {
 
     write_output_days(all_prices, "thread");
     write_output_month(arr_days, "thread");
-    write_results("tests_thread/results.csv", result_tests, all_prices);
+
+    write_results_days("tests_thread/results_days.csv", all_prices);
+    write_results_month("tests_thread/results_month.csv", arr_days);
     //sorting_month(arr_days);
 
     // Selecionar data para escrever como saida de teste (Apagar depois)

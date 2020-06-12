@@ -157,7 +157,7 @@ void sorting_days(vector<Row> &arr, int n_test)
     merge_sort_total_day(arr);
     t_fim = clock();
     time_taken = (t_fim - t_ini) / (double) CLOCKS_PER_SEC;
-    result_tests[n_test].push_back(time_taken);
+    result_tests_month.push_back(time_taken);
 
 }
 

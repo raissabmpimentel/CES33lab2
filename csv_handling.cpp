@@ -80,60 +80,45 @@ vector<string> read_days()
   return(days);
 }
 
-void write_results(string filename, vector<vector<double>> vec, unordered_map<string, vector<Row>> mp) {
+void write_results_days(string filename, unordered_map<string, vector<Row>> mp) {
   ofstream outfile;
   outfile.open(filename);
 
-  int length = vec.size();
-
-  string aux;
-  aux = mp.begin()->first;
+  int length = result_tests_days.size();
 
   outfile << "test number,";
+
   for(auto it = mp.begin(); it != mp.end(); it++)
-    outfile << it->first << ',';
+  {
+    if(it != mp.begin())
+      outfile << ',';
+    outfile << it->first;
+  }
+  outfile << endl;
 
-  aux.resize(7);
-  outfile << aux << endl;
-
-  for (int i = 0; i < vec.size(); i++)
+  for (int i = 0; i < result_tests_days.size(); i++)
   {
     outfile << i+1 << ',';
-    for(auto j = vec[i].begin(); j != vec[i].end(); j++)
+    for(auto j = result_tests_days[i].begin(); j != result_tests_days[i].end(); j++)
     {
       outfile << (*j);
-      if (j + 1 != vec[i].end())
+      if (j + 1 != result_tests_days[i].end())
         outfile << ',';
     }
     outfile << endl;
   }
 }
 
-/*void write_result_days(string filename, vector<vector<double>> vec, vector<string> days) {
+void write_results_month(string filename, vector<Row> arr) {
   ofstream outfile;
   outfile.open(filename);
 
-  int length = vec.size();
+  int length = result_tests_month.size();
 
-  outfile << "test number,";
-  for(auto it = days.begin(); it != days.end(); it++)
-  {
-    if (it != days.begin())
-      outfile << ',';
-    outfile << days[it];
-  }
+  string aux = arr[0].day;
+  aux.resize(7);
+  outfile << "test number," << aux << endl;
 
-  outfile << endl;
-
-  for (int i = 0; i < vec.size(); i++)
-  {
-    outfile << i+1 << ',';
-    for(auto j = vec[i].begin(); j != vec[i].end(); j++)
-    {
-      outfile << (*j);
-      if (j + 1 != vec[i].end())
-        outfile << ',';
-    }
-    outfile << endl;
-  }
-}*/
+  for (int i = 0; i < result_tests_month.size(); i++)
+    outfile << i+1 << ',' << result_tests_month[i] << endl;
+}

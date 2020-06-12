@@ -32,4 +32,5 @@ sem_t full;
 //sem_t empty;
 sem_t mutex;
 
-vector<vector<double>> result_tests;
+vector<vector<double>> result_tests_days;
+vector<double> result_tests_month;

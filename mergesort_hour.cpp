@@ -181,7 +181,7 @@ void sorting_hours_thread(unordered_map<string, vector<Row>> &mp, vector<Row> &a
     time_in_test.push_back(time_taken);
     arr_days.push_back(it->second.back());
   }
-  result_tests.push_back(time_in_test);
+  result_tests_days.push_back(time_in_test);
 }
 
 void sorting_hours_seq(unordered_map<string, vector<Row>> &mp, vector<Row> &arr_days)
@@ -200,7 +200,7 @@ void sorting_hours_seq(unordered_map<string, vector<Row>> &mp, vector<Row> &arr_
     time_in_test.push_back(time_taken);
     arr_days.push_back(it->second.back());
   }
-  result_tests.push_back(time_in_test);
+  result_tests_days.push_back(time_in_test);
 }
 
 void write_output_days(unordered_map<string, vector<Row>> &mp, string type)

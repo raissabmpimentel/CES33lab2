@@ -6,4 +6,6 @@ void write_csv(string filename, vector<Row> vec);
 
 vector<string> read_days();
 
-void write_results(string filename, vector<vector<double>> vec, unordered_map<string, vector<Row>> mp);
+void write_results_days(string filename, unordered_map<string, vector<Row>> mp);
+
+void write_results_month(string filename, vector<Row> arr);
