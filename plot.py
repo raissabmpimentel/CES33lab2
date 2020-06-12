@@ -21,10 +21,10 @@ def plot(x, y, x_label, file_name, path, month, seq):
 		# set "Data" as label for x-axis
 		ax.set_xlabel("Data", fontsize = 12)
 
-		# Format month reference
+		# format month reference
 		ref = ref[1] + "-" + ref[0]
 
-		# Format x label, rotating it 45 degrees and only displaying the date from datetime
+		# format x label, rotating it 45 degrees and only displaying the date from datetime
 		ax.set_xticklabels(x, rotation = 45, fontsize = 8)
 		ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
 
@@ -41,10 +41,10 @@ def plot(x, y, x_label, file_name, path, month, seq):
 		# set "Horário" as label for x-axis
 		ax.set_xlabel("Horário", fontsize = 12)
 
-		# Format day reference
+		# format day reference
 		ref = ref[2] + "-" + ref[1] + "-" + ref[0]
 
-		# Format x label, rotating it 45 degrees and only displaying the time from datetime
+		# format x label, rotating it 45 degrees and only displaying the time from datetime
 		ax.set_xticks(x_label) # set tick for x-axis
 		ax.set_xticklabels(x_label, rotation = 45, fontsize = 8)
 		ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
@@ -66,7 +66,6 @@ def plot(x, y, x_label, file_name, path, month, seq):
 
 	# save fig to the same folder it comes from
 	plt.savefig(path.replace(file_name, "") + title + ".png")
-	
 	plt.close()
 
 
