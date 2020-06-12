@@ -1,22 +1,5 @@
-// #include <unordered_map>
-// #include <pthread.h>
-
-// #define NUM_MRG_THREADS 2
-//
-// /* define derived values from the variables */
-// int numbers_per_thread;
-// int offset;
-// int finished_threads;
-// vector<Row> current_arr;
-//
-// sem_t full;
-// sem_t empty;
-// sem_t mutex;
-
-/* merge function */
+// Funcao para executar merge com base na hors do preco da acao
 void merge_hour(vector<Row> &arr, int l, int m, int r) {
-    //cout << "merge_hour \n";
-    //printVector(arr);
     int i1 = l, i2 = m + 1, i3 = 0;
 
     vector<Row> aux(r - l + 1);
@@ -41,35 +24,25 @@ void merge_hour(vector<Row> &arr, int l, int m, int r) {
     for(int i = l, j = 0; i <= r; ++i, ++j){
         arr[i] = aux[j];
     }
-    //printVector(arr);
-}
-/* merge locally sorted sections */
-void* merge_sort_union_hour(void * arg) {
-    //cout << "merge_sort_union \n";
-    sem_wait(&full);
-    //printVector(current_arr);
-    int length = current_arr.size();
-    for(int i = 0; i < NUM_MRG_THREADS; i = i + 2) {
-        /*int left = i * (numbers_per_thread * aggregation);
-        int right = ((i + 2) * numbers_per_thread * aggregation) - 1;
-        int middle = left + (numbers_per_thread * aggregation) - 1;*/
-        int left = i * (numbers_per_thread);
-        int right = ((i + 2) * numbers_per_thread) - 1;
-        int middle = left + (numbers_per_thread) - 1;
-        if (right >= length) {
-            right = length - 1;
-        }
-        merge_hour(current_arr, left, middle, right);
-    }
-    /*if (number / 2 >= 1) {
-        merge_sort_union(arr, number / 2, aggregation * 2);
-    }*/
-    //printVector(current_arr);
 }
 
-/* perform merge sort */
+// Funcao para realizar o merge das duas metades ordenadas do vetor
+void* merge_sort_union_hour(void * arg) {
+    sem_wait(&full); // Aguardar ate que as duas threads tenham terminado de executar
+    int length = current_arr.size();
+
+    // Determinar limites do vetor a dar merge
+    int left = 0;
+    int right = (2* items_per_thread) - 1;
+    int middle = left + (items_per_thread) - 1;
+    if (right >= length) {
+        right = length - 1;
+    }
+    merge_hour(current_arr, left, middle, right);
+}
+
+// Relizar merge sort comum
 void merge_sort_hour(vector<Row> &arr, int left, int right) {
-    //cout << "merge_sort \n";
     if (left < right) {
         int middle = left + (right - left) / 2;
         merge_sort_hour(arr, left, middle);
@@ -78,46 +51,49 @@ void merge_sort_hour(vector<Row> &arr, int left, int right) {
     }
 }
 
-/** assigns work to each thread to perform merge sort */
+// Realizar merge sort de cada metade do vetor em uma thread
 void *thread_merge_sort_hour(void* arg)
 {
-    //cout << "thread_merge_sort \n";
-    //sem_wait(&empty);
-    //printVector(current_arr);
+    // Calculo dos indices da parte do vetor a ser ordenado pela thread
     int thread_id = (long) arg;
-    int left = thread_id * (numbers_per_thread);
-    int right = (thread_id + 1) * (numbers_per_thread) - 1;
+    int left = thread_id * (items_per_thread);
+    int right = (thread_id + 1) * (items_per_thread) - 1;
     if (thread_id == NUM_MRG_THREADS - 1) {
-        right += offset;
+        right += offset; // Offset sobre uma parte do vetor nao analisado
     }
     int middle = left + (right - left) / 2;
+
+    // Realizar merge sort de uma metade do vetor
     if (left < right) {
         merge_sort_hour(current_arr, left, right);
         merge_sort_hour(current_arr, left + 1, right);
         merge_hour(current_arr, left, middle, right);
     }
+
+    // Entrar em regiao critica
     sem_wait(&mutex);
-    finished_threads++;
-    if(finished_threads == 2)
+    finished_threads++; //Aumentar numero de threads finalizadas
+    //Caso todas as threads estejam finalizadas, liberar para o merge_sort_union_day executar
+    if(finished_threads == NUM_MRG_THREADS)
       sem_post(&full);
-    //printVector(current_arr);
-    sem_post(&mutex);
+    sem_post(&mutex); // Sair da regiao critica
     return NULL;
 }
 
+// Ordenar por data o vetor dos precos de um mes utilizando threads
 void merge_sort_total_hour(vector<Row> &arr)
 {
-  //cout << "merge_sort_total \n";
-  current_arr = arr;
-  //printVector(current_arr);
+  current_arr = arr; // Variavel global com o vetor sendo analisado
+
+  // Calculo de numero de items do subvetor em que se fazer o mergesort e tambem do offset (numero de itens que nao estao numa metade completa do vetor)
   int length = current_arr.size();
-  numbers_per_thread = length / NUM_MRG_THREADS;
+  items_per_thread = length / NUM_MRG_THREADS;
   offset = length % NUM_MRG_THREADS;
 
-  /* begin timing */
+  // Vetor de threads
   pthread_t threads[NUM_MRG_THREADS + 1];
 
-  /* create threads */
+  // Criar threads para executar merge_sort de metade do vetor
   for (long i = 0; i < NUM_MRG_THREADS; i ++) {
       int rc = pthread_create(&threads[i], NULL, thread_merge_sort_hour, (void *)i);
       if (rc){
@@ -126,83 +102,73 @@ void merge_sort_total_hour(vector<Row> &arr)
       }
   }
 
+  // Criar thread para executar o merge das duas metades do vetor
   int rc = pthread_create(&threads[NUM_MRG_THREADS], NULL, merge_sort_union_hour, (void *)NULL);
   if (rc){
       printf("ERROR; return code from pthread_create() is %d\n", rc);
       exit(-1);
   }
 
+  // Aguardar termino de execucao das threads
   for(long i = 0; i < NUM_MRG_THREADS + 1; i++) {
       pthread_join(threads[i], NULL);
   }
 
-  //merge_sort_union(current_arr, NUM_MRG_THREADS, 1);
-  //printVector(current_arr);
+  // O novo vetor passa a ser o ordenado
   arr = current_arr;
 
 }
 
-/* test to ensure that the array is in sorted order */
-void test_array_is_in_order_hour(unordered_map<string, vector<Row>> &mp) {
-  for(auto it = mp.begin(); it != mp.end(); it++)
-  {
-    vector<Row> arr = it->second;
-    int length = arr.size();
-    string max = "";
-    for (int i = 1; i < length; i ++) {
-        if (arr[i].hour >= arr[i - 1].hour) {
-            max = arr[i].hour;
-        } else {
-            cout << "Array of day " << it->first << " is not ordered" << endl;
-            return;
-        }
-    }
-    cout << "Array of day " << it->first << " are in sorted order" << endl;
-  }
-
-}
-
+// Chamar a funcao merge_sort_total_hour para cada dia, inicializar os semaforos e calcular tempo de execucao
 void sorting_hours_thread(unordered_map<string, vector<Row>> &mp, vector<Row> &arr_days)
 {
+  // Inicializar semaforos e numero de threads finalizadas
   clock_t t_ini, t_fim;
-  //cout << "sorting days \n";
   double time_taken;
   vector<double> time_in_test;
+
+  // Para cada dia contido no mapa
   for(auto it = mp.begin(); it != mp.end(); it++)
   {
+    // Inicializar semaforos e numero de threads finalizadas
     finished_threads = 0;
     sem_init(&mutex, 0, 1);
     sem_init(&full, 0, 0);
-    //sem_init(&empty, 0, NUM_MRG_THREADS);
+
+    // Chamar a funcao merge_sort_total_hour e calcular o tempo de execucao
     t_ini = clock();
     merge_sort_total_hour(it->second);
     t_fim = clock();
     time_taken = (t_fim - t_ini) / (double) CLOCKS_PER_SEC;
     time_in_test.push_back(time_taken);
-    arr_days.push_back(it->second.back());
+    arr_days.push_back(it->second.back()); // Salvar resultado do dia
   }
-  result_tests_days.push_back(time_in_test);
+  result_tests_days.push_back(time_in_test); // Salvar vetor de resultado para cada dia
 }
 
+// Ordenar o mapa por horas sequencialmente, chamando a funcao merge_sort_hour
 void sorting_hours_seq(unordered_map<string, vector<Row>> &mp, vector<Row> &arr_days)
 {
   clock_t t_ini, t_fim;
   double time_taken;
   vector<double> time_in_test;
-  //cout << "sorting days \n";
+
+  // Para cada dia contido no mapa
   for(auto it = mp.begin(); it != mp.end(); it++)
   {
+    // Chamar a funcao merge_sort_total_hour e calcular o tempo de execucao
     int right = it->second.size() - 1;
     t_ini = clock();
     merge_sort_hour(it->second, 0, right);
     t_fim = clock();
     time_taken = (t_fim - t_ini) / (double) CLOCKS_PER_SEC;
     time_in_test.push_back(time_taken);
-    arr_days.push_back(it->second.back());
+    arr_days.push_back(it->second.back()); // Salvar resultado do dia
   }
-  result_tests_days.push_back(time_in_test);
+  result_tests_days.push_back(time_in_test); // Salvar vetor de resultado para cada dia
 }
 
+// Escrever output com o vetor dos precos de um dia ordenado por hora
 void write_output_days(unordered_map<string, vector<Row>> &mp, string type)
 {
   for(auto it = mp.begin(); it != mp.end(); it++)

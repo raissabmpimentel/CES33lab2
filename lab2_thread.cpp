@@ -15,6 +15,10 @@ int main() {
     // Executar os testes NUM_TESTS vezes
     for(int i = 0; i < NUM_TESTS; i++)
     {
+      // Limpar dados anteriores
+      arr_days.clear();
+      all_prices.clear();
+
       // Ler dados de todos os dias e inserir no mapa
       for (auto it = days.begin(); it != days.end(); it++)
       {
@@ -23,7 +27,7 @@ int main() {
       }
       // Ordenar o mapa por horas utilizando threads
       sorting_hours_thread(all_prices, arr_days);
-      // Ordenar o vetor de precos diarios utilizando threads
+      // Ordenar por dia o vetor de precos durante um mes utilizando threads
       sorting_days(arr_days, i);
 
     }

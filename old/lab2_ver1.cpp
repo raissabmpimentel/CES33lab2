@@ -7,7 +7,7 @@
 #define NUM_THREADS 2
 
 /* define derived values from the variables */
-int numbers_per_thread;
+int items_per_thread;
 int offset;
 vector<Row> current_arr;
 
@@ -87,9 +87,9 @@ void merge_sort_union(vector<Row> &arr, int number, int aggregation) {
     //cout << "merge_sort_union \n";
     int length = arr.size();
     for(int i = 0; i < number; i = i + 2) {
-        int left = i * (numbers_per_thread * aggregation);
-        int right = ((i + 2) * numbers_per_thread * aggregation) - 1;
-        int middle = left + (numbers_per_thread * aggregation) - 1;
+        int left = i * (items_per_thread * aggregation);
+        int right = ((i + 2) * items_per_thread * aggregation) - 1;
+        int middle = left + (items_per_thread * aggregation) - 1;
         if (right >= length) {
             right = length - 1;
         }
@@ -116,8 +116,8 @@ void *thread_merge_sort(void* arg)
 {
     //cout << "thread_merge_sort \n";
     int thread_id = (long) arg;
-    int left = thread_id * (numbers_per_thread);
-    int right = (thread_id + 1) * (numbers_per_thread) - 1;
+    int left = thread_id * (items_per_thread);
+    int right = (thread_id + 1) * (items_per_thread) - 1;
     if (thread_id == NUM_THREADS - 1) {
         right += offset;
     }
@@ -135,7 +135,7 @@ void merge_sort_total(vector<Row> &arr)
   //cout << "merge_sort_total \n";
   current_arr = arr;
   int length = current_arr.size();
-  numbers_per_thread = length / NUM_THREADS;
+  items_per_thread = length / NUM_THREADS;
 
 
   /* begin timing */
