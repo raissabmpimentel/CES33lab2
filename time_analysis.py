@@ -12,7 +12,7 @@ col_names_days = ['test number','2020-05-20','2020-05-05','2020-05-28','2020-05-
 col_names_month = ['test number', '2020-05']
 
 
-def plot(path, date, x, y, month, seq):
+def plot(path, date, x, y, month, seq, average):
 	# split month/date reference for title
 	ref = date
 	ref = ref.split("-")
@@ -52,6 +52,7 @@ def plot(path, date, x, y, month, seq):
 
 	# insert a horizontal line in plot with the average time spent to execute
 	med = sum(y)/len(y)
+	average[ref] = med
 	ax.axhline(med, xmin=0.03, xmax=0.97, color='black', linewidth=2)
 
 	# print plot with margins
@@ -62,7 +63,7 @@ def plot(path, date, x, y, month, seq):
 	plt.close()
 
 
-def generate_plots_from_file(folder, month, seq):
+def generate_plots_from_file(folder, month, seq, average):
 	# discover entire path of the file you want to generate the plot from
 	path = os.getcwd() + folder
 	if month:
@@ -83,7 +84,7 @@ def generate_plots_from_file(folder, month, seq):
 			c = col_names_month[col]
 			y = df[c].values.tolist()
 			y = [float(i) for i in y] 
-			plot(path, c, x, y, month, seq)
+			plot(path, c, x, y, month, seq, average)
 	else:
 		df = pd.read_csv(path, usecols = col_names_days)
 		x = df["test number"].values.tolist()
@@ -92,14 +93,29 @@ def generate_plots_from_file(folder, month, seq):
 			c = col_names_days[col]
 			y = df[c].values.tolist()
 			y = [float(i) for i in y] 
-			plot(path, c, x, y, month, seq)
+			plot(path, c, x, y, month, seq, average)
 
 
 def generate_all_plots():
-	generate_plots_from_file("/tests_thread/", True, False)
-	generate_plots_from_file("/tests_seq/", True, True)
-	generate_plots_from_file("/tests_thread/", False, False)
-	generate_plots_from_file("/tests_seq/", False, True)
+	average_thread_month = dict()
+	generate_plots_from_file("/tests_thread/", True, False, average_thread_month)
+	df = pd.DataFrame.from_dict(average_thread_month, orient = "index")
+	df.to_csv("average_thread_month.csv", header = False)
+
+	average_seq_month = dict()
+	generate_plots_from_file("/tests_seq/", True, True, average_seq_month)
+	df = pd.DataFrame.from_dict(average_seq_month, orient = "index")
+	df.to_csv("average_seq_month.csv", header = False)
+
+	average_thread_days = dict()
+	generate_plots_from_file("/tests_thread/", False, False, average_thread_days)
+	df = pd.DataFrame.from_dict(average_thread_days, orient = "index")
+	df.to_csv("average_thread_days.csv", header = False)
+
+	average_seq_days = dict()
+	generate_plots_from_file("/tests_seq/", False, True, average_seq_days)
+	df = pd.DataFrame.from_dict(average_seq_days, orient = "index")
+	df.to_csv("average_seq_days.csv", header = False)
 
 
 generate_all_plots()
